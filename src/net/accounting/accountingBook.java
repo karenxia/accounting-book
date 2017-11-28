@@ -5,15 +5,23 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import net.accounting.accountingItem;
 import net.karen.utils.csvWR;
+import net.karen.utils.InformationWR;
 import net.karen.common.constant;
 
 public class accountingBook{
 	private LocalDate currentDate;
 	private String userName;
-	
-	public accountingBook(String userName) {
+	public InformationWR informationHandler;
+	// Option: 
+	// 0: Both DB and file
+	// 1: DB
+	// 2: file: default
+	public accountingBook(String userName, int option) {
 		if(userName.length() != 0) {
 			this.userName = userName;
+		}
+		if(option == 2) {
+			csvHandler = new csvWR();
 		}
 	}
 
@@ -51,14 +59,15 @@ public class accountingBook{
 			}
 			// Write content to csv file
 			String filePath = name + ".csv";
-			csvWR csvHandler = new csvWR();
 			File f = new File(filePath);
 			if(!f.exists()) {
 				System.out.println("File not exists, write header to " + filePath);
-				csvHandler.csvWriter(filePath, atBook);
+				// Write header to csv file
+				atBook.csvHandler.informationWriter(filePath, atBook);
 			}
+			//Write item to csv file
 			accountingItem atItem = new accountingItem(item, date, account);
-			csvHandler.csvWriter(filePath, atItem);
+			atBook.csvHandler.informationWriter(filePath, atItem);
 		}
 	}        
 }
